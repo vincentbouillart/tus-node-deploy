@@ -16,6 +16,7 @@
   "author": "bhstahl@gmail.com",
   "license": "ISC",
   "dependencies": {
-    "tus-node-server": "0.0.5"
+    "tus-node-server": "0.3.2",
+    "express": "4.17.1"
   }
 }

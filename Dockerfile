@@ -1,6 +1,6 @@
 
-# Use Node v4 as the base image.
-FROM node:4
+# Use Node v6 as the base image.
+FROM node:6
 
 # Create app directory
 RUN mkdir -p /usr/src/app
@@ -14,4 +14,5 @@ RUN npm install
 COPY . /usr/src/app
 
 EXPOSE 8080
+EXPOSE 8443
 CMD [ "npm", "start" ]

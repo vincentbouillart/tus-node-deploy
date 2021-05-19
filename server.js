@@ -1,15 +1,36 @@
-'use strict';
+var fs = require('fs');
+var http = require('http');
+var https = require('https');
+var privateKey  = fs.readFileSync('privkey.pem', 'utf8');
+var certificate = fs.readFileSync('cert.pem', 'utf8');
+//const cors = require('cors');
 
-const tus = require('tus-node-server');
-const tus_server = new tus.Server();
+var tus = require('tus-node-server');
 
-tus_server.datastore = new tus.FileStore({
+var credentials = {key: privateKey, cert: certificate};
+var express = require('express');
+
+// tus server
+var server = new tus.Server();
+server.datastore = new tus.FileStore({
     path: '/files',
 });
 
-const host = process.env.HOST || '0.0.0.0';
-const port = process.env.PORT || '8080';
-const server = tus_server.listen({ host, port }, () => {
-    console.log(`[${new Date().toLocaleTimeString()}] tus server listening at http://${server.address().address}:${server.address().port}`);
-});
+var app = express();
+var uploadApp = express();
+/*
+app.use(cors());
+app.options('*', cors());
 
+uploadApp.use(cors());
+uploadApp.options('*', cors());*/
+
+uploadApp.all('*', server.handle.bind(server));
+app.use('/uploads', uploadApp);
+
+
+var httpServer = http.createServer(app);
+var httpsServer = https.createServer(credentials, app);
+
+httpServer.listen(8080);
+httpsServer.listen(8443);
